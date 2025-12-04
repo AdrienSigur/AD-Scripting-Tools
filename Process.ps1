@@ -1,26 +1,49 @@
 Get-Process | Sort-Object -Property CPU -Descending  | Select-Object -First 5 
+# -----------------------------
+# CPU usage total (en %)
+# -----------------------------
+$cpuLoad = (Get-Counter).CounterSamples |
+    Where-Object { $_.Path -match "processeur\(_total\).*temps processeur" } |
+    Select-Object -ExpandProperty CookedValue
+$cpuLoad = [math]::Round($cpuLoad, 2)
 
-## Cpu process 
+# -----------------------------
+# RAM usage (en %)
+# -----------------------------
+$os = Get-CimInstance Win32_OperatingSystem
 
+$ramTotal = $os.TotalVisibleMemorySize * 1KB   # Converti en bytes
+$ramFree  = $os.FreePhysicalMemory     * 1KB
+$ramUsedPercent = [math]::Round((($ramTotal - $ramFree) / $ramTotal) * 100, 2)
 
-$totalCpu = 0 
+# -----------------------------
+# Affichage
+# -----------------------------
+function Show-Loading {
+    param (
+        [string]$Label,
+        [int]$Value
+    )
 
-Get-Process | ForEach-Object {
-    $totalCpu += $_.CPU
+    if ($Value -lt 60) {
+        $color = "Green"
+    }
+    elseif ($Value -lt 85) {
+        $color = "Yellow"
+    }
+    else {
+        $color = "Red"
+    }
+    Write-Host ("{0,-9}= {1} %" -f $Label, $Value) -ForegroundColor $color
 }
 
-
-$os = Get-CimInstance Win32_ComputerSystem
-$ram = Get-CimInstance -ClassName CIM_OperatingSystem
-
-
-
-$ramTotal = $os.TotalPhysicalMemory
-$ramfree = $ram.FreePhysicalMemory
-$UsedRam = [math]::Round((($ramTotal - $ramFree) / $ramTotal) * 100, 2)
+Show-Loading -Label "Cpu used" -Value $cpuLoad
+Show-Loading -Label "Ram Used" -Value $ramUsedPercent
 
 
 
-Write-Host
-
-Write-Host "Ram total used = $UsedRam"
+Get-NetIPConfiguration  -DestinationPrefix "0.0.0.0/0" |
+    Where-Object {
+        $_.IPv4DefaultGateway -ne $null -and
+        $_.InterfaceAlias -notmatch "Virtual|VM|vEthernet|Loopback|Pseudo"
+    } | Select-Object -First 1 -Property InterfaceAlias,IPv4Address,IPv4DefaultGateway 

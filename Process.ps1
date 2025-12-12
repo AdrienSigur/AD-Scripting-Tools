@@ -12,12 +12,12 @@ $cpuLoad = [math]::Round($cpuLoad, 2)
 # -----------------------------
 $os = Get-CimInstance Win32_OperatingSystem
 
-$ramTotal = $os.TotalVisibleMemorySize * 1KB   # Converti en bytes
+$ramTotal = $os.TotalVisibleMemorySize * 1KB   
 $ramFree  = $os.FreePhysicalMemory     * 1KB
 $ramUsedPercent = [math]::Round((($ramTotal - $ramFree) / $ramTotal) * 100, 2)
 
 # -----------------------------
-# Affichage
+# Affichage couleur
 # -----------------------------
 function Show-Loading {
     param (
@@ -37,13 +37,30 @@ function Show-Loading {
     Write-Host ("{0,-9}= {1} %" -f $Label, $Value) -ForegroundColor $color
 }
 
+Write-Host""
+
+# -----------------------------
+# Cpu and Ram used 
+# -----------------------------
+
 Show-Loading -Label "Cpu used" -Value $cpuLoad
 Show-Loading -Label "Ram Used" -Value $ramUsedPercent
 
+Write-Host""
 
 
-Get-NetIPConfiguration  -DestinationPrefix "0.0.0.0/0" |
-    Where-Object {
-        $_.IPv4DefaultGateway -ne $null -and
-        $_.InterfaceAlias -notmatch "Virtual|VM|vEthernet|Loopback|Pseudo"
-    } | Select-Object -First 1 -Property InterfaceAlias,IPv4Address,IPv4DefaultGateway 
+# -----------------------------
+# IPV4 pc and IPV4 gateway 
+# -----------------------------
+
+$iface = Get-NetRoute -DestinationPrefix "0.0.0.0/0" |
+         Sort-Object RouteMetric |
+         Select-Object -First 1
+
+$ip = Get-NetIPAddress -InterfaceIndex $iface.InterfaceIndex -AddressFamily IPv4 |
+      Select-Object -ExpandProperty IPAddress
+
+$gw = $iface.NextHop
+
+Write-Host "IPv4 address : $ip" -ForegroundColor Blue
+Write-Host "IPv4 gateway : $gw" -ForegroundColor Blue

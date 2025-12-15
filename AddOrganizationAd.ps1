@@ -1,6 +1,6 @@
 $OrganizationUnits = @("Terrason" , "Paris" , "Dunkerque")
 
-$DistinguishedName = "DC=Arasaka,DC=lab"
+$DistinguishedName = (Get-AdDomain).DistinguishedName
 
 $SubUnits = @("Group" , "Computer" , "Compta" , "RH" , "Direction")
 
@@ -9,7 +9,6 @@ foreach ($OU in $OrganizationUnits) {
 
     $list = @{
         Name = $OU
-        path = $DistinguishedName
         ProtectedFromAccidentalDeletion = $false
 
     }

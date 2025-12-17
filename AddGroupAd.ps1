@@ -1,60 +1,64 @@
-param (
-        [Parameter(Mandatory)]
-            [String]$Ou ,
-            
-        [Parameter(Mandatory)]
-            [String]$Csv 
-)
 
 function GroupCreation{
 
     param (
         [string]$Ou,
-        [String]$Csv
+        [String]$Csv 
     )
    
     $CsvPath = $Csv
 
-    $Group = Import-Csv $CsvPath -Delimiter "," 
+    $CsvGroup = Import-Csv $CsvPath -Delimiter "," 
 
+    $RootDN = "OU=$Ou," + (Get-AdDomain).DistinguishedName
 
-    $OrganizationUnit = "$Ou"
-    $RootResearch = "OU=$OrganizationUnit," + (Get-AdDomain).DistinguishedName
+    $RootOU = Get-ADOrganizationalUnit -Identity $RootDN -ErrorAction SilentlyContinue
 
-    try {
+    WRITE-Host $RootOU
 
-        $Exist = Get-ADOrganizationalUnit -Identity $RootResearch -ErrorAction Stop
-
-    }catch{
-
-        Write-Host "The Organization Unit $OU not existing" -ForegroundColor Yellow
-        return
+    if (-not $RootOU) {
+    Write-Host "The OU '$Ou' does not exist under this Domain Controller" -ForegroundColor Yellow
+    return
     }
 
-    Write-Host "OU exists, CSV loaded"
+    $OuGroup = Get-ADOrganizationalUnit -SearchBase $RootOU.DistinguishedName -Filter "Name -like '*Group*'" -ErrorAction SilentlyContinue
+
+    write-host $OuGroup
+
+    if (-not $OuGroup) {
+    Write-Host "The OU 'Group' does not exist under $Ou" -ForegroundColor Yellow
+    return
+    }
 
 
-foreach ($groups in $Group){
+foreach ($Groups in $CsvGroup){
 
-    if($Exist){
 
-        $group = @{
-            Name = $test
-            SamAccountName = $test
-            GroupCreation = $test
-            GroupCategory = $test
-            Description = $test
-            Path = $test
+        $Group = @{
+            Name = $($Groups.Name)
+            SamAccountName = $($Groups.SamAccountName)
+            GroupScope = $($groups.GroupScope)
+            GroupCategory = $($Groups.GroupCategory)
+            Description = $($Groups.Description)
+            Path = $OuGroup.DistinguishedName
 
         }
 
-        write-host @group
+        New-ADGroup @Group
+
+        write-host "Creation du groupe $($Groups.name) dans l'OU $Ou" -ForegroundColor Green
     }
 
 
 
 }
    
-}
+ GroupCreation -Ou "Paris" -Csv "Group.csv"
 
-GroupCreation -Ou $Ou -Csv $Csv
+
+
+
+
+
+
+# New-ADGroup -Name "GS_Compta" -GroupScope Global -GroupCategory Security -Path "OU=PARIS,DC=arasaka,DC=lab"

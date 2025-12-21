@@ -23,7 +23,6 @@ foreach($user in $users){
 
     $SamAccountName = $SamName.tolower().Substring(0,1)+"."+$SamLastName.tolower()
 
-    
 
     $UserCreation = @{
         Path = "OU=$($user.SousOu),$OUPrincipal,$domainRoot"

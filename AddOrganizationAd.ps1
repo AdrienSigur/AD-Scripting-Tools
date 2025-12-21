@@ -1,16 +1,12 @@
 $OrganizationUnits = @("Terrason" , "Paris" , "Dunkerque")
-
 $DistinguishedName = (Get-AdDomain).DistinguishedName
-
 $SubUnits = @("Group" , "Computer" , "Compta" , "RH" , "Direction")
-
 
 foreach ($OU in $OrganizationUnits) { 
 
     $list = @{
         Name = $OU
         ProtectedFromAccidentalDeletion = $false
-
     }
 
     $Exist = Get-ADOrganizationalUnit -Filter "Name -like '$OU'" -ErrorAction SilentlyContinue
@@ -23,9 +19,7 @@ foreach ($OU in $OrganizationUnits) {
         Write-Host "Success Creation of $OU" -ForegroundColor Green
 
         Get-ADOrganizationalUnit -Filter "Name -like '$OU'"
-
     }
-
 
     foreach ($SubOu in $SubUnits) {
 
@@ -36,10 +30,8 @@ foreach ($OU in $OrganizationUnits) {
             Path = $path
             ProtectedFromAccidentalDeletion = $false
         }
-
         New-ADOrganizationalUnit  @Sub
     }
-
 
 }
 

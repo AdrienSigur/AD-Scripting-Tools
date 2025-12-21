@@ -50,9 +50,7 @@ function Show-Loading {
         $Pourcentage =  [math]::Round((($sizeMax - $SizeRemaining) / $SizeMax) * 100, 2)
         Write-host""
         Show-Loading -Label "Disk Used $letter" -Value $Pourcentage
-        Write-Host "Volume $letter Remaining  $Size GB" -ForegroundColor Blue
-        
-
+        Write-Host "Volume $letter Remaining  $Size GB" -ForegroundColor Blue       
     }
 
 }
@@ -60,9 +58,7 @@ function Show-Loading {
 DriveVolume -Drive "C" , "E"
 Write-host""
     
-
 ### SERVICES ####
-
 
 $Services = "DNS", "Dhcp", "sshd" , "ntds" ,"WSearch"
 
@@ -80,14 +76,10 @@ Foreach ($S in $Services) {
 
     }catch{
             Write-Host "ERREUR : This service '$S' is unfound or does not exist." -ForegroundColor Yellow
-    }
-       
+    }   
 }     
 
-
 write-host""
-
-
 
 #### Gateway and ip addess in ipv4 ####
 

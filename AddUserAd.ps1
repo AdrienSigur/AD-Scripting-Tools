@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <#
 .SYNOPSIS
     Crée des utilisateurs AD en masse à partir d'un CSV.
@@ -34,10 +35,27 @@ $users = Import-Csv $CsvPath -Delimiter ","
 $domainRoot = (Get-AdDomain).DistinguishedName
 $dnsRoot = (Get-AdDomain).dnsRoot
 $securePassword = ConvertTo-SecureString $defaultPasswd -AsPlainText -Force 
+=======
+
+$OUprincipal ="OU=PARIS"
+
+$CsvPath="User.csv"
+
+$domainRoot = (Get-AdDomain).DistinguishedName
+
+$dnsRoot = (Get-AdDomain).dnsRoot
+
+$defaultPassword = "Root1234@"
+
+$securePassword = ConvertTo-SecureString $defaultPassword -AsPlainText -Force 
+
+$users = Import-Csv $CsvPath -Delimiter "," 
+>>>>>>> cd14d9371c14593f2c621820b23c8dd0e585ac54
 
 
 foreach($user in $users){
 
+<<<<<<< HEAD
 
     
   if ([string]::IsNullOrWhiteSpace($user.Prenom) -or [string]::IsNullOrWhiteSpace($user.Nom)) {
@@ -56,6 +74,19 @@ foreach($user in $users){
 
         Path = "OU=$($user.SousOu),$OUPrincipal,$domainRoot"
         Name = "$($user.Prenom) + ${$user.Name}"
+=======
+    
+  $SamName = "$($user.Prenom)"
+
+    $SamLastName = "$($user.Nom)"
+
+    $SamAccountName = $SamName.tolower().Substring(0,1)+"."+$SamLastName.tolower()
+
+
+    $UserCreation = @{
+        Path = "OU=$($user.SousOu),$OUPrincipal,$domainRoot"
+        Name = "$($user.Prenom)"
+>>>>>>> cd14d9371c14593f2c621820b23c8dd0e585ac54
         SamAccountName = $SamAccountName
         UserPrincipalName = "${SamAccountName}@$dnsRoot"
         ChangePasswordAtLogon = $true
@@ -63,11 +94,15 @@ foreach($user in $users){
         EmailAddress  = "${SamAccountName}@$dnsRoot"
         AccountPassword = $securePassword
         Enabled = $true
+<<<<<<< HEAD
         ErrorAction = "Stop"
+=======
+>>>>>>> cd14d9371c14593f2c621820b23c8dd0e585ac54
      }
      
     New-AdUser @UserCreation
 
+<<<<<<< HEAD
      Write-host "$($user.Prenom) is success and created" -ForegroundColor Green 
     }catch{
       Write-host "$($user.Prenom) already exist" -ForegroundColor Red 
@@ -75,3 +110,7 @@ foreach($user in $users){
     
     }
 }
+=======
+     Write-host "$($User.Prenom) is success and created" -ForegroundColor Green 
+ }
+>>>>>>> cd14d9371c14593f2c621820b23c8dd0e585ac54

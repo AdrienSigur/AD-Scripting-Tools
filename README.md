@@ -1,41 +1,39 @@
-Devops
-Gem personnalisé
-Certainly! Here is the English version of the professional README for your GitHub repository. This version highlights your technical proficiency in Active Directory and PowerShell optimization.
+# 🛠️ Active Directory Automation & CSV Optimization
 
-🛠️ Active Directory Automation & CSV Optimization
-This repository contains a suite of PowerShell scripts designed to automate Active Directory (AD) management using data-driven workflows (CSV). These tools are optimized to accelerate user, group, and organizational unit (OU) management while minimizing manual entry errors.
+This repository features a suite of PowerShell scripts designed to automate and optimize Active Directory (AD) management through data-driven workflows. By leveraging CSV files, these tools eliminate manual GUI tasks, reduce human error, and ensure consistent object creation across the domain.
 
-🚀 Key Features
-AddUserAd.ps1: Bulk user creation with optimized attribute mapping from CSV files.
+[Image of Active Directory automation workflow]
 
-AddGroupAd.ps1: Streamlined creation of Security and Distribution groups.
+## 🚀 Key Features
 
-AddUsertoGroup.ps1: Automated member assignment based on CSV data.
+* **AddUserAd.ps1**: Performs bulk user creation with optimized attribute mapping (Department, Title, OU, etc.) directly from CSV data.
+* **AddGroupAd.ps1**: Handles the automated creation of Security and Distribution groups.
+* **AddOrganizationAd.ps1**: Manages the structural hierarchy of the AD by generating Organizational Units (OUs) from optimized paths.
+* **AddUsertoGroup.ps1**: Bridges users and groups by processing membership assignments in bulk.
+* **ServerStatus.ps1**: A diagnostic utility to check Domain Controller health and connectivity.
+* **CommandLet.ps1**: The core engine of the project. It centralizes shared functions, logging, and error-handling logic to keep other scripts clean and modular.
 
-AddOrganizationAd.ps1: Structural AD management through Organizational Unit (OU) creation.
+## 💡 Why This Project? (The DevOps Value)
 
-ServerStatus.ps1: Monitoring script to verify the health and connectivity of Domain Controllers.
+Instead of manual "point-and-click" administration, this project applies **Infrastructure as Code (IaC)** principles to Windows Server management:
+* **Scalability**: Create 10 or 1,000 users in the same amount of time.
+* **Consistency**: Every object is created with the exact same parameters defined in the CSV.
+* **Modularity**: The `CommandLet.ps1` script acts as a library, making the code easier to maintain and update.
 
-CommandLet.ps1: A core toolkit containing reusable functions and error-handling logic for the entire suite.
+## 📋 Prerequisites
 
-📋 Prerequisites
-Active Directory PowerShell Module must be installed on the execution machine.
+1.  **Active Directory PowerShell Module** (RSAT) installed.
+2.  **Administrative Privileges** on the Domain Controller.
+3.  **CSV Files** encoded in **UTF-8** to support special characters and international names.
 
-Administrative Privileges on the target Domain Controller.
+## 🛠️ Usage
 
-CSV Files formatted in UTF-8 (to ensure correct handling of special characters/accents).
+### 1. Prepare your CSV
+Ensure your CSV headers match the script expectations. 
+*Example for `AddUserAd.ps1`:* `SamAccountName,GivenName,Surname,OU,Password`
 
-🛠️ Usage
-1. Data Preparation
-Ensure your CSV files follow the required schema. Common columns include: SamAccountName, GivenName, Surname, OU, and Description.
+### 2. Execution
+Run scripts from an elevated PowerShell terminal:
 
-2. Execution
-Run the scripts from an elevated PowerShell console:
-
-PowerShell
-./AddUserAd.ps1 -Path "./data/users.csv"
-🏗️ Script Architecture
-To follow "Don't Repeat Yourself" (DRY) principles, the logic is centralized in CommandLet.ps1. This script handles data validation and error logging, allowing the main scripts to remain lightweight, efficient, and easy to maintain.
-
-✍️ Author
- DevOps & Systems Automation - Your GitHub Profile
+```powershell
+./AddUserAd.ps1 -Path "./data/employees_january.csv"
